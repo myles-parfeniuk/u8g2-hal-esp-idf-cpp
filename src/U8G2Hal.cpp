@@ -3,20 +3,11 @@
 
 #include "esp_log.h"
 #include "sdkconfig.h"
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#include "u8g2_esp32_hal.h"
+#include "U8G2Hal.hpp"
 
-static const char* TAG = "u8g2_hal";
-static const unsigned int I2C_TIMEOUT_MS = 1000;
-
-static spi_device_handle_t handle_spi;   // SPI handle.
-static i2c_cmd_handle_t handle_i2c;      // I2C handle.
-static u8g2_esp32_hal_t u8g2_esp32_hal;  // HAL state data.
-
-#define HOST    SPI2_HOST
 
 #undef ESP_ERROR_CHECK
 #define ESP_ERROR_CHECK(x)                   \
@@ -28,18 +19,23 @@ static u8g2_esp32_hal_t u8g2_esp32_hal;  // HAL state data.
     }                                        \
   } while (0);
 
+u8g2_esp32_hal_t U8G2Hal::u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;
+spi_device_handle_t U8G2Hal::handle_spi = NULL;
+i2c_cmd_handle_t U8G2Hal::handle_i2c = NULL;
+
 /*
  * Initialze the ESP32 HAL.
  */
-void u8g2_esp32_hal_init(u8g2_esp32_hal_t u8g2_esp32_hal_param) {
+void U8G2Hal::hal_init(u8g2_esp32_hal_t u8g2_esp32_hal_param) {
   u8g2_esp32_hal = u8g2_esp32_hal_param;
-}  // u8g2_esp32_hal_init
+}  
+
 
 /*
  * HAL callback function as prescribed by the U8G2 library.  This callback is
  * invoked to handle SPI communications.
  */
-uint8_t u8g2_esp32_spi_byte_cb(u8x8_t* u8x8,
+uint8_t U8G2Hal::spi_byte_cb(u8x8_t* u8x8,
                                uint8_t msg,
                                uint8_t arg_int,
                                void* arg_ptr) {
@@ -105,13 +101,14 @@ uint8_t u8g2_esp32_spi_byte_cb(u8x8_t* u8x8,
     }
   }
   return 0;
-}  // u8g2_esp32_spi_byte_cb
+}  // spi_byte_cb
+
 
 /*
  * HAL callback function as prescribed by the U8G2 library.  This callback is
  * invoked to handle I2C communications.
  */
-uint8_t u8g2_esp32_i2c_byte_cb(u8x8_t* u8x8,
+uint8_t U8G2Hal::i2c_byte_cb(u8x8_t* u8x8,
                                uint8_t msg,
                                uint8_t arg_int,
                                void* arg_ptr) {
@@ -132,7 +129,8 @@ uint8_t u8g2_esp32_i2c_byte_cb(u8x8_t* u8x8,
         break;
       }
 
-      i2c_config_t conf = {0};
+      i2c_config_t conf;
+      memset(&conf, 0, sizeof(i2c_config_t));
       conf.mode = I2C_MODE_MASTER;
       ESP_LOGI(TAG, "sda_io_num %d", u8g2_esp32_hal.bus.i2c.sda);
       conf.sda_io_num = u8g2_esp32_hal.bus.i2c.sda;
@@ -184,13 +182,14 @@ uint8_t u8g2_esp32_i2c_byte_cb(u8x8_t* u8x8,
     }
   }
   return 0;
-}  // u8g2_esp32_i2c_byte_cb
+}  //i2c_byte_cb
+
 
 /*
  * HAL callback function as prescribed by the U8G2 library.  This callback is
  * invoked to handle callbacks for GPIO and delay functions.
  */
-uint8_t u8g2_esp32_gpio_and_delay_cb(u8x8_t* u8x8,
+uint8_t U8G2Hal::gpio_and_delay_cb(u8x8_t* u8x8,
                                      uint8_t msg,
                                      uint8_t arg_int,
                                      void* arg_ptr) {
@@ -259,4 +258,5 @@ uint8_t u8g2_esp32_gpio_and_delay_cb(u8x8_t* u8x8,
       break;
   }
   return 0;
-}  // u8g2_esp32_gpio_and_delay_cb
+}  //gpio_and_delay_cb
+
