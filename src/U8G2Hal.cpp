@@ -138,7 +138,7 @@ uint8_t U8G2Hal::i2c_byte_cb(u8x8_t* u8x8,
       ESP_LOGI(TAG, "scl_io_num %d", u8g2_esp32_hal.bus.i2c.scl);
       conf.scl_io_num = u8g2_esp32_hal.bus.i2c.scl;
       conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
-      ESP_LOGI(TAG, "clk_speed %d", I2C_MASTER_FREQ_HZ);
+      ESP_LOGI(TAG, "clk_speed %ld", I2C_MASTER_FREQ_HZ);
       conf.master.clk_speed = I2C_MASTER_FREQ_HZ;
       ESP_LOGI(TAG, "i2c_param_config %d", conf.mode);
       ESP_ERROR_CHECK(i2c_param_config(I2C_MASTER_NUM, &conf));

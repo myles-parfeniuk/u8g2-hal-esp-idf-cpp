@@ -53,7 +53,7 @@ class U8G2Hal
 
     static const constexpr uint16_t I2C_MASTER_TX_BUF_DISABLE = 0;  //  I2C master do not need buffer
     static const constexpr uint16_t  I2C_MASTER_RX_BUF_DISABLE = 0;  //  I2C master do not need buffer
-    static const constexpr uint16_t  I2C_MASTER_FREQ_HZ = 50000;     //  I2C master clock frequency
+    static const constexpr uint32_t  I2C_MASTER_FREQ_HZ = 400000U;     //  I2C master clock frequency
     static const constexpr uint16_t I2C_TIMEOUT_MS = 1000;
     static const constexpr uint16_t  ACK_CHECK_EN = 0x1;             //  I2C master will check ack from slave
     static const constexpr uint16_t  ACK_CHECK_DIS = 0x0;  //  I2C master will not check ack from slave
